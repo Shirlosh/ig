@@ -1,6 +1,4 @@
-from classes.abstracts.Identifiable import Identifiable
+class Graph:
 
-
-class Graph(Identifiable):
-    def __init__(self, ID=None):
-        super().__init__(ID)
+    def __init__(self):
+        self.__edges, self.__vertices = {}, {}

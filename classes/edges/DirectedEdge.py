@@ -1,5 +1,4 @@
 from classes.edges.Edge import Edge
-from classes.vertices.Vertex import Vertex
 
 
 class DirectedEdge(Edge):

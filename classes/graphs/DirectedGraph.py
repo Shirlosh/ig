@@ -42,7 +42,7 @@ class DirectedGraph(Graph):
         if self.__outgoingAdjacency[edge.Source.ID].get(edge.Target.ID, None) is None:
             self.__outgoingAdjacency[edge.Source.ID][edge.Target.ID] = {}
         if self.__incomingAdjacency[edge.Target.ID].get(edge.Source.ID, None) is None:
-            self.__incomingAdjacency[edge.Source.ID][edge.Target.ID] = {}
+            self.__incomingAdjacency[edge.Target.ID][edge.Source.ID] = {}
         self.__outgoingAdjacency[edge.Source.ID][edge.Target.ID][edge.ID] = edge
         self.__incomingAdjacency[edge.Target.ID][edge.Source.ID][edge.ID] = edge
         return edge
@@ -59,16 +59,16 @@ class DirectedGraph(Graph):
         """
         Adds an edge between two vertices according to their IDs.
         If a vertex with a given ID does not exist in the graph, a vertex with the ID will be created.
-        Raises Exception if an edge exists and __multigraph is False
+        Raises Exception if an edge exists and _multigraph is False
         :return: the edge added or a dictionary with the edges found
         """
         v1, v2 = self.Vertex(vertex1ID), self.Vertex(vertex2ID)
         return self.AddEdge(DirectedEdge(v1 if v1 else Vertex(ID=vertex1ID), v2 if v2 else Vertex(ID=vertex2ID)))
 
-    def GetFromTo(self, vertex1ID, vertex2ID) -> DirectedEdge | list | None:
+    def GetFromTo(self, vertex1ID, vertex2ID):
         """
         Returns edges from a vertex to another.
-        :return: an Edge if __multigraph is False. Returns a list of edges otherwise
+        :return: an Edge if _multigraph is False. Returns a list of edges otherwise
         """
         if not (edgeMap := self.__outgoingAdjacency.get(vertex1ID, {}).get(vertex2ID, None)): return None
         if self._multigraph: return edgeMap.values()

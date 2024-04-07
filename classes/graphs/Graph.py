@@ -60,13 +60,14 @@ class Graph:
         """
         Will add the object edge to the set of edges, overwrites if edge.ID already exists.
         Overwrites the endpoints if the vertices already exist.
-        Raises Exception if there is an edge between the vertices and __multigraph is False
+        Raises Exception if there is an edge between the vertices and _multigraph is False
         :return: the edge added
         """
         if self.AreConnected(edge.Vertices[0], edge.Vertices[1]) and not self._multigraph:
             raise Exception("Graph is not a multigraph and an edge already exists between vertices")
-        self.AddVertex(v1 := edge.Vertices[0])
-        self.AddVertex(v2 := edge.Vertices[1])
+        v1, v2 = self.Vertex(edge.Vertices[0].ID), self.Vertex(edge.Vertices[1].ID)
+        v1 = v1 if v1 else self.AddVertex(edge.Vertices[0])
+        v2 = v2 if v2 else self.AddVertex(edge.Vertices[1])
         self.__edges[edge.ID] = edge
         if self.__adjacency[v1.ID].get(v2.ID, None) is None:
             self.__adjacency[v1.ID][v2.ID] = {}
@@ -89,16 +90,16 @@ class Graph:
         """
         Adds an edge between two vertices according to their IDs.
         If a vertex with a given ID does not exist in the graph, a vertex with the ID will be created.
-        Raises Exception if an edge exists and __multigraph is False
+        Raises Exception if an edge exists and _multigraph is False
         :return: the edge added or a dictionary with the edges found
         """
         v1, v2 = self.Vertex(vertex1ID), self.Vertex(vertex2ID)
         return self.AddEdge(Edge(v1 if v1 else Vertex(ID=vertex1ID), v2 if v2 else Vertex(ID=vertex2ID)))
 
-    def GetBetween(self, vertex1ID, vertex2ID) -> Edge | list | None:
+    def GetBetween(self, vertex1ID, vertex2ID):
         """
         Returns edges between two vertices given their IDs.
-        :return: an Edge if __multigraph is False. Returns a list of edges otherwise
+        :return: an Edge if _multigraph is False. Returns a list of edges otherwise
         """
         if not (edgeMap := self.__adjacency.get(vertex1ID, {}).get(vertex2ID, None)): return None
         if self._multigraph: return edgeMap.values()
@@ -107,7 +108,7 @@ class Graph:
     def AreConnected(self, vertex1ID, vertex2ID):
         return self.__adjacency.get(vertex1ID, {}).get(vertex2ID, None) is not None
 
-    def AdjacentEdges(self, vertexID) -> dict | None:
+    def AdjacentEdges(self, vertexID):
         """
         :return: a dictionary of the form {Vertex.ID: {Edge.ID: Edge}} containing the adjacency of the vertex with ID vertexID.
         """
@@ -128,3 +129,9 @@ class Graph:
     def _removeEmptyConnection(self, d, v1ID, v2ID):
         if d[v1ID, {}].get(v2ID, None):
             del d[v1ID][v2ID]
+
+    def Copy(self, *, deep: bool = False):
+        copy = type(self)(multigraph=self._multigraph)
+        [copy.AddVertex(v.Copy() if deep else v) for v in self.Vertices.values()]
+        [copy.AddEdge(e.Copy(deep) if deep else e) for e in self.Edges.values()]
+        return copy

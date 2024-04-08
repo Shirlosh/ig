@@ -1,3 +1,4 @@
+from UtilityFunctions import ListDictionaryValues
 from classes.edges.DirectedEdge import DirectedEdge
 from classes.edges.Edge import Edge
 from classes.graphs.Graph import Graph
@@ -9,7 +10,7 @@ class DirectedGraph(Graph):
         super().__init__(multigraph=multigraph)
         self.__outgoingAdjacency, self.__incomingAdjacency = {}, {}
 
-    def AddVertex(self, vertex: Vertex = None) -> Vertex:
+    def AddVertex(self, vertex: Vertex = None):
         """
         :param vertex: optional, will add the object to the set of vertices, overwrites if Vertex.ID already exists
         :return: the vertex added
@@ -32,7 +33,7 @@ class DirectedGraph(Graph):
         del self.__outgoingAdjacency[v.ID]
         return v, es
 
-    def AddEdge(self, edge: DirectedEdge) -> DirectedEdge:
+    def AddEdge(self, edge: DirectedEdge):
         """
         Will add the object edge to the set of edges, overwrites if edge.ID already exists.
         Overwrites the endpoints if the vertices already exist.
@@ -55,7 +56,7 @@ class DirectedGraph(Graph):
             self._removeEmptyConnection(self.__incomingAdjacency, e.Target.ID, e.Source.ID)
         return e
 
-    def Connect(self, vertex1ID, vertex2ID) -> DirectedEdge:
+    def Connect(self, vertex1ID, vertex2ID):
         """
         Adds an edge between two vertices according to their IDs.
         If a vertex with a given ID does not exist in the graph, a vertex with the ID will be created.
@@ -71,37 +72,51 @@ class DirectedGraph(Graph):
         :return: an Edge if _multigraph is False. Returns a list of edges otherwise
         """
         if not (edgeMap := self.__outgoingAdjacency.get(vertex1ID, {}).get(vertex2ID, None)): return None
-        if self._multigraph: return edgeMap.values()
+        if self._multigraph: return list(edgeMap.values())
         return edgeMap[next(iter(edgeMap))]
 
     def AreConnectedFromTo(self, vertex1ID, vertex2ID):
         return self.__outgoingAdjacency.get(vertex1ID, {}).get(vertex2ID, None) is not None
 
-    def OutgoingEdges(self, vertexID) -> dict:
+    def OutgoingEdges(self, vertexID):
         """
-        :return: a dictionary of the form {neighborID: Edge} containing the adjacency of the vertex with ID vertexID.
+        :return: a dictionary of the form {Vertex.ID: {Edge.ID: Edge}} containing the adjacency of the vertex with ID vertexID.
         """
         return self.__outgoingAdjacency.get(vertexID, None)
 
-    def IncomingEdges(self, vertexID) -> dict:
+    def OutgoingEdgeList(self, vertexID):
         """
-        :return: a dictionary of the form {neighborID: Edge} containing the adjacency of the vertex with ID vertexID.
+        :return: Create a list our of self.OutgoingEdges. Requires more time though.
+        """
+        if not (d := self.OutgoingEdges(vertexID)): return None
+        return ListDictionaryValues(d)
+
+    def IncomingEdges(self, vertexID):
+        """
+        :return: a dictionary of the form {Vertex.ID: {Edge.ID: Edge}} containing the adjacency of the vertex with ID vertexID.
         """
         return self.__incomingAdjacency.get(vertexID, None)
 
-    def Targets(self, vertexID) -> set:
+    def IncomingEdgeList(self, vertexID):
+        """
+        :return: Create a list our of self.IncomingEdges. Requires more time though.
+        """
+        if not (d := self.IncomingEdges(vertexID)): return None
+        return ListDictionaryValues(d)
+
+    def Targets(self, vertexID):
         """
         :return: All neighbors of the vertex with ID vertexID that have incoming edges from that vertex
         """
-        edges = self.OutgoingEdges(vertexID)
-        return set(edges.keys()) if edges else None
+        adjacency = self.OutgoingEdges(vertexID)
+        return [self.Vertex(vID) for vID in adjacency.keys()] if adjacency else []
 
-    def Sources(self, vertexID) -> set:
+    def Sources(self, vertexID):
         """
         :return: All neighbors of the vertex with ID vertexID that have outgoing edges towards that vertex
         """
-        edges = self.IncomingEdges(vertexID)
-        return set(edges.keys()) if edges else None
+        adjacency = self.IncomingEdges(vertexID)
+        return [self.Vertex(vID) for vID in adjacency.keys()] if adjacency else []
 
     def OutDegree(self, vertexID):
         edges = self.OutgoingEdges(vertexID)

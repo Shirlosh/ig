@@ -1,3 +1,4 @@
+from UtilityFunctions import ListDictionaryValues
 from classes.edges.Edge import Edge
 from classes.vertices.Vertex import Vertex
 
@@ -12,15 +13,15 @@ class Graph:
         self.__adjacency = {}
 
     @property
-    def Vertices(self) -> dict:
+    def Vertices(self):
         return self.__vertices
 
     @property
-    def Edges(self) -> dict:
+    def Edges(self):
         return self.__edges
 
     @property
-    def Adjacency(self) -> dict:
+    def Adjacency(self):
         return self.__adjacency
 
     @property
@@ -33,7 +34,7 @@ class Graph:
     def Edge(self, ID):
         return self.__edges.get(ID, None)
 
-    def AddVertex(self, vertex: Vertex = None) -> Vertex:
+    def AddVertex(self, vertex: Vertex = None):
         """
         :param vertex: optional, will add the object to the set of vertices, overwrites if Vertex.ID already exists
         :return: the vertex added
@@ -56,7 +57,7 @@ class Graph:
         del self.__vertices[v.ID]
         return v, es
 
-    def AddEdge(self, edge: Edge) -> Edge:
+    def AddEdge(self, edge: Edge):
         """
         Will add the object edge to the set of edges, overwrites if edge.ID already exists.
         Overwrites the endpoints if the vertices already exist.
@@ -77,7 +78,7 @@ class Graph:
         self.__adjacency[v2.ID][v1.ID][edge.ID] = edge
         return edge
 
-    def RemoveEdge(self, edgeID) -> Edge:
+    def RemoveEdge(self, edgeID):
         if e := self.__edges.pop(edgeID, None):
             v1, v2 = e.Vertices
             del self.__adjacency[v1.ID][v2.ID][edgeID]
@@ -86,7 +87,7 @@ class Graph:
             self._removeEmptyConnection(self.__adjacency, v2.ID, v1.ID)
         return e
 
-    def Connect(self, vertex1ID, vertex2ID) -> Edge:
+    def Connect(self, vertex1ID, vertex2ID):
         """
         Adds an edge between two vertices according to their IDs.
         If a vertex with a given ID does not exist in the graph, a vertex with the ID will be created.
@@ -102,7 +103,7 @@ class Graph:
         :return: an Edge if _multigraph is False. Returns a list of edges otherwise
         """
         if not (edgeMap := self.__adjacency.get(vertex1ID, {}).get(vertex2ID, None)): return None
-        if self._multigraph: return edgeMap.values()
+        if self._multigraph: return list(edgeMap.values())
         return edgeMap[next(iter(edgeMap))]
 
     def AreConnected(self, vertex1ID, vertex2ID):
@@ -114,9 +115,16 @@ class Graph:
         """
         return self.__adjacency.get(vertexID, None)
 
-    def Neighbors(self, vertexID) -> set:
+    def AdjacentEdgeList(self, vertexID):
+        """
+        :return: Create a list our of self.AdjacentEdges. Requires more time though.
+        """
+        if not (d := self.AdjacentEdges(vertexID)): return None
+        return ListDictionaryValues(d)
+
+    def Neighbors(self, vertexID):
         edges = self.AdjacentEdges(vertexID)
-        return set(edges.keys()) if edges else None
+        return list(edges.keys()) if edges else None
 
     def Degree(self, vertexID):
         edges = self.AdjacentEdges(vertexID)

@@ -12,7 +12,7 @@ class Tree(DirectedGraph):
     def Root(self):
         return self.__root
 
-    def AddVertex(self, vertex: Vertex = None, parentID=None):
+    def AddVertex(self, vertex: Vertex = None, *, parentID=None):
         """
         Adds a vertex as a child of a vertex with ID parentID. the parameter parentID is required!
         :return: the edge added to the tree between the vertex and its parent

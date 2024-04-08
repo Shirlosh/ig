@@ -140,6 +140,7 @@ class Graph:
         [copy.AddEdge(e.Copy(deep) if deep else e) for e in self.Edges.values()]
         return copy
 
+    @staticmethod
     def _removeEmptyConnection(self, d, v1ID, v2ID):
         if d[v1ID, {}].get(v2ID, None):
             del d[v1ID][v2ID]

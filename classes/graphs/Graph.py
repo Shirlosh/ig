@@ -1,4 +1,4 @@
-from UtilityFunctions import ListDictionaryValues
+from modules.data.dictionaries import ListDictionaryValues
 from classes.edges.Edge import Edge
 from classes.vertices.Vertex import Vertex
 

@@ -1,4 +1,4 @@
-from UtilityFunctions import ListDictionaryValues
+from modules.data.dictionaries import ListDictionaryValues
 from classes.edges.DirectedEdge import DirectedEdge
 from classes.edges.Edge import Edge
 from classes.graphs.Graph import Graph

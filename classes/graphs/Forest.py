@@ -1,6 +1,5 @@
 from classes.edges.DirectedEdge import DirectedEdge
 from classes.graphs.DirectedGraph import DirectedGraph
-from classes.graphs.Tree import Tree
 from classes.vertices.Vertex import Vertex
 
 
@@ -56,7 +55,7 @@ class Forest(DirectedGraph):
     def Children(self, vertexID):
         return self.Targets(vertexID)
 
-    def AddSubtree(self, vertexID, subtree: Tree):
+    def AddSubtree(self, vertexID, subtree):
         """
         :param vertexID: the vertex which is to become the parent of the subtree
         :param subtree: The subtree to add as Tree.
@@ -68,7 +67,7 @@ class Forest(DirectedGraph):
         [self.AddEdge(e) for e in subtree.Edges.values()]
         return edge
 
-    def AddTree(self, tree: Tree):
+    def AddTree(self, tree):
         self.AddVertex(tree.Root)
         [self.AddEdge(e) for e in tree.Edges.values()]
         return tree
@@ -85,6 +84,7 @@ class Forest(DirectedGraph):
         :param deepcopy: use if you want copies of the vertices and edge used in self
         :return: a Tree representing the required subtree. If the root does not exist, returns None
         """
+        from classes.graphs.Tree import Tree
         if not (root := self.Vertex(rootID)): return None
         tree = Tree(root=(root.Copy() if deepcopy else root))
         edgesToAdd = self.OutgoingEdgeList(root.ID)

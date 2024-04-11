@@ -132,7 +132,7 @@ class Graph:
 
     @property
     def GraphDegree(self):
-        return max([self.Degree(v.ID) for v in self.__vertices])
+        return max([self.Degree(vID) for vID in self.__vertices], default=0)
 
     def Copy(self, *, deep: bool = False):
         copy = type(self)(multigraph=self._multigraph)
@@ -141,6 +141,6 @@ class Graph:
         return copy
 
     @staticmethod
-    def _removeEmptyConnection(self, d, v1ID, v2ID):
+    def _removeEmptyConnection(d, v1ID, v2ID):
         if d[v1ID, {}].get(v2ID, None):
             del d[v1ID][v2ID]

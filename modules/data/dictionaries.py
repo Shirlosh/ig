@@ -2,6 +2,10 @@ import json
 import pandas as pd
 
 
+def PrintDictionary(d):
+    print(json.dumps(d, indent=2))
+
+
 def ListDictionaryValues(d):
     l = []
     for key in d:

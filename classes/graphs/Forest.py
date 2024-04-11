@@ -1,11 +1,11 @@
-from classes.edges.DirectedEdge import DirectedEdge
+from classes.edges.Edge import Edge
 from classes.graphs.DirectedGraph import DirectedGraph
 from classes.vertices.Vertex import Vertex
 
 
 class Forest(DirectedGraph):
     def __init__(self):
-        super().__init__(multigraph=False)
+        super().__init__()
         self.__roots = {}
 
     @property
@@ -30,15 +30,15 @@ class Forest(DirectedGraph):
         for child in children: self.__roots[child.ID] = child
         return v, es
 
-    def AddEdge(self, edge: DirectedEdge):
+    def AddEdge(self, edge: Edge):
         """
         Will add the object edge to the set of edges, overwrites if edge.ID already exists.
         Overwrites the endpoints if the vertices already exist.
         Will not add the edge if it breaks a forest topology
         :return: the edge added
         """
-        if self.Parent(edge.Target.ID):
-            raise Exception("Cannot add an edge towards a vertex that already has a parent in a forest.")
+        if self.Parent(edge.Target.ID) or edge.Target.ID in self.__roots:
+            raise Exception("Cannot add an edge towards a vertex that already has a parent in a forest or towards a root.")
         if edge.Target.ID in self.__roots: del self.__roots[edge.Target.ID]
         return super().AddEdge(edge)
 

@@ -2,7 +2,11 @@ from math import radians, sin, cos, asin, sqrt
 import numpy as np
 
 
-def VectorsAngle(vector1, vector2):
+def ReverseVector(vector):
+    return -vector[0], -vector[1]
+
+
+def AngleBetweenVectors(vector1, vector2):
     a, b = np.array(vector1), np.array(vector2)
     norm = np.linalg.norm(a) * np.linalg.norm(b)
     if norm == 0: return 0

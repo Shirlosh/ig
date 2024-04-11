@@ -1,5 +1,4 @@
 from modules.data.dictionaries import ListDictionaryValues
-from classes.edges.DirectedEdge import DirectedEdge
 from classes.edges.Edge import Edge
 from classes.graphs.Graph import Graph
 from classes.vertices.Vertex import Vertex
@@ -33,7 +32,7 @@ class DirectedGraph(Graph):
         del self.__outgoingAdjacency[v.ID]
         return v, es
 
-    def AddEdge(self, edge: DirectedEdge):
+    def AddEdge(self, edge: Edge):
         """
         Will add the object edge to the set of edges, overwrites if edge.ID already exists.
         Overwrites the endpoints if the vertices already exist.
@@ -64,7 +63,7 @@ class DirectedGraph(Graph):
         :return: the edge added or a dictionary with the edges found
         """
         v1, v2 = self.Vertex(vertex1ID), self.Vertex(vertex2ID)
-        return self.AddEdge(DirectedEdge(v1 if v1 else Vertex(ID=vertex1ID), v2 if v2 else Vertex(ID=vertex2ID)))
+        return self.AddEdge(Edge(v1 if v1 else Vertex(ID=vertex1ID), v2 if v2 else Vertex(ID=vertex2ID)))
 
     def GetFromTo(self, vertex1ID, vertex2ID):
         """

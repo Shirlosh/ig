@@ -1,4 +1,4 @@
-from classes.edges.DirectedEdge import DirectedEdge
+from classes.edges.Edge import Edge
 from classes.graphs.Forest import Forest
 from classes.vertices.Vertex import Vertex
 
@@ -34,7 +34,7 @@ class Tree(Forest):
         super().RemoveVertex(vertexID)
         return tree
 
-    def AddEdge(self, edge: DirectedEdge):
+    def AddEdge(self, edge: Edge):
         """
         Will add the object edge to the set of edges, overwrites if edge.ID already exists.
         Overwrites the endpoints if the vertices already exist.

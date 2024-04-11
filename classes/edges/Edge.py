@@ -12,6 +12,14 @@ class Edge(Identifiable, Extendable):
     def Vertices(self) -> tuple:
         return self.__vertices
 
+    @property
+    def Source(self):
+        return self.Vertices[0]
+
+    @property
+    def Target(self):
+        return self.Vertices[1]
+
     def Copy(self, *, deep: bool = False):
         vs = tuple(v.Copy() for v in self.__vertices) if deep else self.__vertices
         copy = type(self)(*vs, self.ID)

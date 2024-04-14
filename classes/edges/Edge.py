@@ -1,9 +1,10 @@
 from classes.abstracts.Identifiable import Identifiable
 from classes.abstracts.Extendable import Extendable
+from classes.abstracts.Mappable import Mappable
 from classes.vertices import Vertex
 
 
-class Edge(Identifiable, Extendable):
+class Edge(Identifiable, Extendable, Mappable):
     def __init__(self, v1: Vertex, v2: Vertex, *, ID=None):
         super().__init__(ID)
         self.__vertices = (v1, v2)

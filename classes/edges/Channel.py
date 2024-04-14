@@ -1,3 +1,4 @@
+from classes.abstracts.Mappable import Mappable
 from classes.edges.Edge import Edge
 from classes.edges.Link import Link
 from modules.mathematics.Geometry import GlobeDistance
@@ -12,7 +13,7 @@ defaults = {  # defaults are for 1ft antenna, frequency 15Ghz and a common bandw
 }
 
 
-class Channel(Edge):
+class Channel(Edge, Mappable):
     def __init__(self, link: Link, *, frequency=defaults['frequency'],
                                       bandwidth=defaults['bandwidth'],
                                       TxLevel=defaults['TxLevel'],

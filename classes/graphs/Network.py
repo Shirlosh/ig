@@ -1,5 +1,7 @@
 from classes.edges.Channel import Channel
 from classes.edges.Interference import Interference
+from classes.edges.Link import Link
+from classes.vertices.Site import Site
 from modules.data.dictionaries import ListDictionaryValues
 
 
@@ -111,5 +113,18 @@ def NetworkClass(topology, *topologyArgs, **topologyKWArgs):
 
         def RemoveLink(self, linkID):
             return self.RemoveEdge(linkID)
+
+        def AddChannel(self, linkID, channel: Channel):
+            link = self.Link(linkID)
+            return None if not link else link.AddChannel(channel)
+
+        def FromDictionary(self, data):
+            for link in data.get('Edges', {}).values():
+                sData, tData = link['Source'], link['Target']
+                source = Site(sData['Location'], ID=sData['ID']).UpdateFromDictionary(sData)
+                target = Site(tData['Location'], ID=tData['ID']).UpdateFromDictionary(tData)
+                self.AddLink(Link(source, target, ID=link['ID'])).FromDictionary(link)
+            [self.Site(v['ID'].UpdateFromDictionary(v)) for v in data.get('Vertices', {}).values()]
+            return self
 
     return Network

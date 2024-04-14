@@ -15,6 +15,14 @@ class Forest(DirectedGraph):
     def IsRoot(self, vertexID):
         return self.__roots.get(vertexID, None) is not None
 
+    def _AddEndpoint(self, vertex: Vertex = None):
+        """
+        Should be only use right before connecting the vertex to an edge!
+        For adding vertices use .AddVertex!
+        """
+        v = super().AddVertex(vertex)
+        return v
+
     def AddVertex(self, vertex: Vertex = None):
         v = super().AddVertex(vertex)
         self.__roots[v.ID] = v
@@ -33,13 +41,14 @@ class Forest(DirectedGraph):
     def AddEdge(self, edge: Edge):
         """
         Will add the object edge to the set of edges, overwrites if edge.ID already exists.
-        Overwrites the endpoints if the vertices already exist.
+        Creates the endpoints if the vertices don't exist.
         Will not add the edge if it breaks a forest topology
         :return: the edge added
         """
-        if self.Parent(edge.Target.ID) or edge.Target.ID in self.__roots:
-            raise Exception("Cannot add an edge towards a vertex that already has a parent in a forest or towards a root.")
-        if edge.Target.ID in self.__roots: del self.__roots[edge.Target.ID]
+        if self.Parent(edge.Target.ID): raise Exception("Cannot add an edge towards a vertex that already has a parent in a forest.")
+        self.__roots.pop(edge.Target.ID, None)
+        if not self.Vertex(edge.Source.ID): self._AddEndpoint(edge.Source)
+        if not self.Vertex(edge.Target.ID): self._AddEndpoint(edge.Target)
         return super().AddEdge(edge)
 
     def RemoveEdge(self, edgeID):
@@ -47,7 +56,8 @@ class Forest(DirectedGraph):
         self.__roots[e.Target.ID] = e.Target
 
     def Parent(self, vertexID):
-        return self.Sources(vertexID)[0] if vertexID not in self.__roots else None
+        sources = self.Sources(vertexID)
+        return sources[0] if sources else None
 
     def ParentEdge(self, vertexID):
         return self.GetFromTo(self.Parent(vertexID).ID, vertexID) if vertexID not in self.__roots else None
@@ -62,7 +72,7 @@ class Forest(DirectedGraph):
         :return: the edge created between the parent vertex and the subtree
         """
         if not self.Vertex(vertexID): return None
-        root = self.AddVertex(subtree.Root)
+        root = self._AddEndpoint(subtree.Root)
         edge = self.Connect(vertexID, root.ID)
         [self.AddEdge(e) for e in subtree.Edges.values()]
         return edge

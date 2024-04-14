@@ -1,9 +1,10 @@
+from classes.abstracts.Mappable import Mappable
 from modules.data.dictionaries import ListDictionaryValues
 from classes.edges.Edge import Edge
 from classes.vertices.Vertex import Vertex
 
 
-class Graph:
+class Graph(Mappable):
     """
     A class for graph structure. Can be used as multigraph as well.
     """
@@ -139,6 +140,15 @@ class Graph:
         [copy.AddVertex(v.Copy() if deep else v) for v in self.Vertices.values()]
         [copy.AddEdge(e.Copy(deep) if deep else e) for e in self.Edges.values()]
         return copy
+
+    def FromDictionary(self, data):
+        for edge in data.get('Edges', {}).values():
+            sData, tData = edge['Source'], edge['Target']
+            source = Vertex(ID=sData['ID']).UpdateFromDictionary(sData)
+            target = Vertex(ID=tData['ID']).UpdateFromDictionary(tData)
+            self.AddEdge(Edge(source, target, ID=edge['ID'])).FromDictionary(edge)
+        [self.Vertex(v['ID']).UpdateFromDictionary(v) for v in data.get('Vertices', {}).values()]
+        return self
 
     @staticmethod
     def _removeEmptyConnection(d, v1ID, v2ID):

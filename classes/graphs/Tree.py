@@ -17,10 +17,10 @@ class Tree(Forest):
         Adds a vertex as a child of a vertex with ID parentID. the parameter parentID is required!
         :return: the edge added to the tree between the vertex and its parent
         """
+        if not self.Vertices: return super().AddVertex(vertex)
         if not parentID: raise Exception("Must provide a parent vertex ID for Tree.AddVertex.")
         if not self.Vertex(parentID): raise Exception("Parent provided at Tree.AddVertex does not exist.")
-        v = super().AddVertex(vertex)
-        return self.Connect(parentID, v.ID)
+        return self.Connect(parentID, super()._AddEndpoint(vertex).ID)
 
     def RemoveVertex(self, vertexID):
         """
@@ -41,8 +41,8 @@ class Tree(Forest):
         Will not add the edge if it breaks a tree topology
         :return: the edge added
         """
-        if self.Vertex(edge.Target.ID):
-            raise Exception("Adding an edge towards an existing vertex would create either circles or multiple parents to a single vertex.")
+        v = self.Vertex(edge.Target.ID)
+        if v and self.Parent(v.ID): raise Exception("Adding an edge towards a vertex with a parent would create either circles or multiple parents to a single vertex.")
         return super().AddEdge(edge)
 
     def RemoveEdge(self, edgeID):

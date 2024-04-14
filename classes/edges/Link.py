@@ -1,3 +1,4 @@
+from classes.edges.Channel import Channel
 from classes.edges.Edge import Edge
 from classes.vertices.Site import Site
 
@@ -20,3 +21,9 @@ class Link(Edge):
 
     def RemoveChannel(self, channelID):
         return self.__channels.pop(channelID, None)
+
+    def FromDictionary(self, linkData):
+        super().FromDictionary(linkData)
+        [self.AddChannel(Channel(self, ID=channel.ID)).UpdateFromDictionary(channel)
+         for channel in linkData.get('Channels', {}).values()]
+        return self

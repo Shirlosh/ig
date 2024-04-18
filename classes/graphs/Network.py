@@ -24,7 +24,6 @@ def NetworkClass(topology, *topologyArgs, **topologyKWArgs):
             """
             return [channel for link in self.Edges.values() for channel in link.Channels.values()]
 
-        # @property to mappable exception
         def Interferences(self, *, asMap=False, includeSelfInterference=False):
             """
             Returns all interference between links in the network

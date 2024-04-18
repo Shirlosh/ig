@@ -1,6 +1,5 @@
 import json
 import uuid
-
 import pandas as pd
 
 
@@ -23,6 +22,7 @@ def ExportJSON(d, file):
 
 def ImportJSON(file):
     return json.load(open(file, 'r'))
+
 
 def ImportExcelToDictionary(file):
     df = pd.read_excel(file)

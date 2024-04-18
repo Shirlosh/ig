@@ -124,7 +124,7 @@ def NetworkClass(topology, *topologyArgs, **topologyKWArgs):
                 source = Site(sData['Location'], ID=sData['ID']).UpdateFromDictionary(sData)
                 target = Site(tData['Location'], ID=tData['ID']).UpdateFromDictionary(tData)
                 self.AddLink(Link(source, target, ID=link['ID'])).FromDictionary(link)
-            [self.Site(v['ID'].UpdateFromDictionary(v)) for v in data.get('Vertices', {}).values()]
+            [self.Site(v['ID']).UpdateFromDictionary(v) for v in data.get('Vertices', {}).values()]
             return self
 
     return Network

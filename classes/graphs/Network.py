@@ -24,7 +24,6 @@ def NetworkClass(topology, *topologyArgs, **topologyKWArgs):
             """
             return [channel for link in self.Edges.values() for channel in link.Channels.values()]
 
-        @property
         def Interferences(self, *, asMap=False, includeSelfInterference=False):
             """
             Returns all interference between links in the network
@@ -100,7 +99,7 @@ def NetworkClass(topology, *topologyArgs, **topologyKWArgs):
             return self.AddVertex(site, **kwargs)
 
         def AddVertex(self, vertex: Site = None, **kwargs):
-            super().AddVertex(vertex, **kwargs)
+            return super().AddVertex(vertex, **kwargs)
 
         def RemoveSite(self, siteID):
             return self.RemoveVertex(siteID)
@@ -124,7 +123,7 @@ def NetworkClass(topology, *topologyArgs, **topologyKWArgs):
                 source = Site(sData['Location'], ID=sData['ID']).UpdateFromDictionary(sData)
                 target = Site(tData['Location'], ID=tData['ID']).UpdateFromDictionary(tData)
                 self.AddLink(Link(source, target, ID=link['ID'])).FromDictionary(link)
-            [self.Site(v['ID'].UpdateFromDictionary(v)) for v in data.get('Vertices', {}).values()]
+            [self.Site(v['ID']).UpdateFromDictionary(v) for v in data.get('Vertices', {}).values()]
             return self
 
     return Network

@@ -8,13 +8,13 @@ def plotlyMaps(graphDicts, title='Untitled', save=None):
     multipleGraph = len(graphDicts) > 1
     for d in graphDicts:
         c = random.choice(plotly.colors.DEFAULT_PLOTLY_COLORS)
-        for l in d['Links']:
+        for l in d['Edges'].values():
             descriptionS = {k: v for k, v in l.items() if k != 'ID' and 'Position' not in k and 'Target' not in k}
             descriptionT = {k: v for k, v in l.items() if k != 'ID' and 'Position' not in k and 'Source' not in k}
             fig.add_trace(go.Scattermapbox(
                 mode="markers+lines",
-                lon=[l["Source.Position"][1], l["Target.Position"][1]],
-                lat=[l["Source.Position"][0], l["Target.Position"][0]],
+                lon=[l["Source"]["Location"][1], l["Target"]["Location"][1]],
+                lat=[l["Source"]["Location"][0], l["Target"]["Location"][0]],
                 text=[str(descriptionS), str(descriptionT)],
                 name=l['ID'],
                 marker={'size': 10, "color": "black" if multipleGraph else None},

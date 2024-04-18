@@ -5,12 +5,12 @@ import plotly.graph_objects as go
 
 def plotlyMaps(graphDicts, title='Untitled', save=None):
     fig = go.Figure()
-    multipleGraph = len(graphDicts) > 1
+    multipleGraph = len(graphDicts) >= 1
     for d in graphDicts:
         c = random.choice(plotly.colors.DEFAULT_PLOTLY_COLORS)
         for l in d['Edges'].values():
-            descriptionS = {k: v for k, v in l.items() if k != 'ID' and 'Position' not in k and 'Target' not in k}
-            descriptionT = {k: v for k, v in l.items() if k != 'ID' and 'Position' not in k and 'Source' not in k}
+            descriptionS = {k: v for k, v in l.items() if k != 'ID' and k != 'Vertices' and 'Location' not in k and 'Target' not in k and v}
+            descriptionT = {k: v for k, v in l.items() if k != 'ID' and k != 'Vertices' and 'Location' not in k and 'Source' not in k and v}
             fig.add_trace(go.Scattermapbox(
                 mode="markers+lines",
                 lon=[l["Source"]["Location"][1], l["Target"]["Location"][1]],

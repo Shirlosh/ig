@@ -24,8 +24,7 @@ def _BFS(g: Graph, srcID, EdgesSubsetType):
     visited[srcID] = True
     while queue:
         vID = queue.pop(0)
-        eds = getattr(g, EdgesSubsetType)(vID)
-        for edge in eds:
+        for edge in getattr(g, EdgesSubsetType)(vID):
             neighbor = edge.Source if edge.Source.ID != vID else edge.Target
             if not visited[neighbor.ID]:
                 queue.append(neighbor.ID)

@@ -2,11 +2,11 @@ from classes.graphs.Graph import Graph
 
 
 def EdgeColoring(g: Graph):
-    colors, maxColor  = {}, -1
+    colors, maxColor = {}, -1
     for e in g.Edges.values():
         XID, fID = e.Source.ID, e.Target.ID
         fan = __findMaximalFan(g, XID, fID, colors)
-        c, d = __findColorsCD(g, XID, fan, colors)
+        c, d = __findColor(g, XID, colors), __findColor(g, fan[-1], colors)
         cdPathLen = __findAndInvertCDPath(g, XID, c, d, colors)
         wIdx, w = __findWInFan(g, d, fan, colors) if cdPathLen else (len(fan) - 1, fan[-1])
         __rotateFan(g, XID, fan[: wIdx + 1], colors)
@@ -23,59 +23,60 @@ def __findMaximalFan(g: Graph, xID, fID, colors):
     :param colors: {edge.ID: color} map
     :return: maximal fan
     """
-    fan = [fID]
-    isMaximal = False
-    lastV = fID
-    while not isMaximal:
-        isMaximal = True
-        for vID in g.Neighbors(xID):
-            eID = g.GetBetween(xID, vID).ID
-            if vID not in fan and colors.get(eID) is not None and __isColorFree(g, lastV, colors[eID], colors):
-                fan.append(lastV := vID)
-                isMaximal = False
+    fan, newFans = [], [fID]
+    while newFans:
+        fan.extend(newFans)
+        newFans = [vID for vID in g.Neighbors(xID) if vID not in fan and colors.get(eID := g.GetBetween(xID, vID).ID) is not None and __isColorFree(g, newFans[-1], colors[eID], colors)]
     return fan
 
 
-def __findColorsCD(g: Graph, x, fan, colors): # graph vertex vertex
-    c = d = 1
-    while not __isColorFree(g, x, c, colors):
-        c += 1
-    while not __isColorFree(g, fan[-1], d, colors):
-        d += 1
-    return c, d
+def __findColor(g: Graph, vID, colors):
+    """
+    :param g: Graph
+    :param vID: the id of the vertex we want to find the color
+    :param colors: colors map {edgeID: color}
+    :return: free color
+    """
+    c = 1
+    while not __isColorFree(g, vID, c, colors): c += 1
+    return c
 
 
 def __isColorFree(g, vID, c, colors):
     for uID in g.Neighbors(vID):
-        if c == colors.get(g.GetBetween(vID, uID).ID):
-            return False
+        if c == colors.get(g.GetBetween(vID, uID).ID): return False
     return True
 
 
-def __findAndInvertCDPath(g: Graph, xID, c, d, colors):  # vertex color, color
+def __findAndInvertCDPath(g: Graph, xID, c, d, colors):
+    """
+    :param g: Graph
+    :param xID: source vertex
+    :param c: first color of the path
+    :param d: second color of the path
+    :return: length of the path
+    """
     isPathMaximal = False
-    visited = {xID}
-    curID = xID
+    visited, curID = {xID}, xID
     while not isPathMaximal:
         isPathMaximal = True
         for vID in g.Neighbors(curID):
             if d == colors.get(eID := g.GetBetween(curID, vID).ID) and vID not in visited:
                 colors[eID] = c
-                curID = vID
                 c, d = d, c
+                visited.add(curID := vID)
                 isPathMaximal = False
-                visited.add(vID)
                 break
     return len(visited) - 1
 
 
-def __findWInFan(g: Graph, d, fan, colors):  # color, fan, colors
+def __findWInFan(g: Graph, d, fan, colors):
     """
     :param g: Graph
     :param d: Color
     :param fan:
-    :param colors: colors map
-    :return:
+    :param colors: colors map {edge.ID: color}
+    :return: w index in the fan , wID
     """
     for i, uID in enumerate(fan):
         if __isColorFree(g, uID, d, colors):
@@ -84,6 +85,13 @@ def __findWInFan(g: Graph, d, fan, colors):  # color, fan, colors
 
 
 def __rotateFan(g: Graph, xID, fan, colors):
+    """
+    given a fan of a vertex x , assign the color of edge (x,f[i+1]) to the edge (x,f[i])
+    :param g: Graph
+    :param xID: id of vertex x
+    :param fan:
+    :param colors: colors map {edge.ID : color}
+    """
     for uID, utID in zip(fan, fan[1:]):
         colors[g.GetBetween(xID, uID).ID] = colors[g.GetBetween(xID, utID).ID]
 

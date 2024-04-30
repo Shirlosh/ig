@@ -37,7 +37,7 @@ def __findColor(g: Graph, vID, colors):
     :param colors: colors map {edgeID: color}
     :return: free color
     """
-    c = 0
+    c = 1
     while not __isColorFree(g, vID, c, colors): c += 1
     return c
 

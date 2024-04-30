@@ -29,8 +29,5 @@ def _BFS(g: Graph, srcID, EdgesSubsetType):
             if not visited[neighbor.ID]:
                 queue.append(neighbor.ID)
                 visited[neighbor.ID] = True
-                if pathList.get(vID) is None:
-                    pathList[neighbor.ID] = [edge.ID]
-                else:
-                    pathList[neighbor.ID] = pathList[vID] + [edge.ID]
+                pathList[neighbor.ID] = [edge.ID] if pathList.get(vID) is None else pathList[vID] + [edge.ID]
     return pathList

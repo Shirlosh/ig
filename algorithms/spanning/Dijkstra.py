@@ -1,6 +1,5 @@
 import sys
 from queue import PriorityQueue
-
 from classes.graphs.Graph import Graph
 
 
@@ -13,11 +12,9 @@ def Dijkstra(g: Graph, fromSet, *, directed='None', weightFunction=lambda e: 1):
     :return: paths dictionary - {sourceID : {targetID [path to the target-edges list)]}
     """
     EdgesSubsetType = {'Into': 'IncomingEdgeList', 'From': 'OutgoingEdgeList', 'None': 'AdjacentEdgeList'}[directed]
-
     def reversePath(path):
         path.reverse()
         return path
-
     return {v.ID: {k: (reversePath(path) if directed == 'Into' else path) for k, path in
                    __dijkstra(g, v.ID, EdgesSubsetType, weightFunction).items()} for v in fromSet}
 

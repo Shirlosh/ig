@@ -1,10 +1,10 @@
 from classes.graphs.Graph import Graph
 
 
-def BFS(g: Graph, fromSet, directed='None'):
+def BFS(g: Graph, fromSet, *, directed='None'):
     """
     :param g: Graph type
-    :param fromSet: set of the sources id's
+    :param fromSet: set of the sources' IDs
     :param directed: 'Into' (all path into source vertex) / 'From' (all paths from source vertex) / None (indirect)
     :return: paths dictionary - {sourceID : {targetID [path to the target-edges list)]}
     """
@@ -12,15 +12,13 @@ def BFS(g: Graph, fromSet, directed='None'):
     def reversePath(path):
         path.reverse()
         return path
-
     return {v.ID: {k: (reversePath(path) if directed == 'Into' else path) for k, path in
-                   _BFS(g, v.ID, EdgesSubsetType).items()} for v in fromSet}
+                   __BFS(g, v.ID, EdgesSubsetType).items()} for v in fromSet}
 
 
-def _BFS(g: Graph, srcID, EdgesSubsetType):
+def __BFS(g: Graph, srcID, EdgesSubsetType):
     visited = {key: False for key in g.Vertices.keys()}
-    pathList = {}
-    queue = [srcID]
+    pathList, queue = {}, [srcID]
     visited[srcID] = True
     while queue:
         vID = queue.pop(0)

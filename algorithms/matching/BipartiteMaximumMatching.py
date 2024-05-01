@@ -2,7 +2,6 @@ import itertools
 import sys
 from scipy.optimize import linear_sum_assignment
 import numpy as np
-
 from classes.graphs.BipartiteGraph import BipartiteGraph
 
 

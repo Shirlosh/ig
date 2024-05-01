@@ -1,7 +1,25 @@
 from classes.graphs.Graph import Graph
 
 
+def GreedyEdgeColoring(g: Graph):
+    """
+    Colors the edges of the graph in a greedy way. Faster than .EdgeColoring but uses potentially more colors.
+    :return: {colors: {Edge.ID: int}, size: int}, where 'colors' is the map of colors and 'size' is the number of colors used.
+    """
+    colors, maxColor = {}, 1
+    for e in g.Edges.values():
+        adjColors = lambda vID: {colors[a.ID] for a in g.AdjacentEdgeList(vID) if colors.get(a.ID, None)}
+        c = min(set(range(1, maxColor + 2)) - (adjColors(e.Source.ID) | adjColors(e.Target.ID)))
+        maxColor = max(c, maxColor)
+        colors[e.ID] = c
+    return {'colors': colors, 'size': maxColor}
+
+
 def EdgeColoring(g: Graph):
+    """
+    Colors the edges of the graph.
+    :return: {colors: {Edge.ID: int}, size: int}, where 'colors' is the map of colors and 'size' is the number of colors used.
+    """
     colors, maxColor = {}, -1
     for e in g.Edges.values():
         XID, fID = e.Source.ID, e.Target.ID

@@ -36,8 +36,7 @@ class Tree(Forest):
 
     def AddEdge(self, edge: Edge):
         """
-        Will add the object edge to the set of edges, overwrites if edge.ID already exists.
-        Overwrites the endpoints if the vertices already exist.
+        Will add the object edge to the set of edges
         Will not add the edge if it breaks a tree topology
         :return: the edge added
         """

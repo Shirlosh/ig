@@ -11,7 +11,7 @@ class DirectedGraph(Graph):
 
     def AddVertex(self, vertex: Vertex = None):
         """
-        :param vertex: optional, will add the object to the set of vertices, overwrites if Vertex.ID already exists
+        :param vertex: optional, will add the object to the set of vertices
         :return: the vertex added
         """
         v = super().AddVertex(vertex)
@@ -34,8 +34,7 @@ class DirectedGraph(Graph):
 
     def AddEdge(self, edge: Edge):
         """
-        Will add the object edge to the set of edges, overwrites if edge.ID already exists.
-        Overwrites the endpoints if the vertices already exist.
+        Will add the object edge to the set of edges.
         :return: the edge added
         """
         super().AddEdge(edge)
@@ -54,16 +53,6 @@ class DirectedGraph(Graph):
             del self.__incomingAdjacency[e.Target.ID][e.Source.ID][edgeID]
             self._removeEmptyConnection(self.__incomingAdjacency, e.Target.ID, e.Source.ID)
         return e
-
-    def Connect(self, vertex1ID, vertex2ID):
-        """
-        Adds an edge between two vertices according to their IDs.
-        If a vertex with a given ID does not exist in the graph, a vertex with the ID will be created.
-        Raises Exception if an edge exists and _multigraph is False
-        :return: the edge added or a dictionary with the edges found
-        """
-        v1, v2 = self.Vertex(vertex1ID), self.Vertex(vertex2ID)
-        return self.AddEdge(Edge(v1 if v1 else Vertex(ID=vertex1ID), v2 if v2 else Vertex(ID=vertex2ID)))
 
     def GetFromTo(self, vertex1ID, vertex2ID):
         """

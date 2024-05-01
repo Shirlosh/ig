@@ -40,7 +40,7 @@ class Forest(DirectedGraph):
 
     def AddEdge(self, edge: Edge):
         """
-        Will add the object edge to the set of edges, overwrites if edge.ID already exists.
+        Will add the object edge to the set of edges
         Creates the endpoints if the vertices don't exist.
         Will not add the edge if it breaks a forest topology
         :return: the edge added

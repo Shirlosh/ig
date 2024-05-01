@@ -37,10 +37,12 @@ class Graph(Mappable):
 
     def AddVertex(self, vertex: Vertex = None):
         """
-        :param vertex: optional, will add the object to the set of vertices, overwrites if Vertex.ID already exists
-        :return: the vertex added
+        :param vertex: optional, will add the object to the set of vertices
+        :return: the vertex added, or exception if vertex already exists
         """
         vertex = vertex if vertex else Vertex()
+        if self.Vertex(vertex.ID):
+            raise Exception("The graph already contains a vertex with this ID.")
         self.__vertices[vertex.ID] = vertex
         self.__adjacency[vertex.ID] = {}
         return vertex
@@ -60,21 +62,23 @@ class Graph(Mappable):
 
     def AddEdge(self, edge: Edge):
         """
-        Will add the object edge to the set of edges, overwrites if edge.ID already exists.
-        Overwrites the endpoints if the vertices already exist.
+        Will add the object edge to the set of edges, throws exception if an edge with the same ID exists.
         Raises Exception if there is an edge between the vertices and _multigraph is False
+        Raises an exception if the IDs of the endpoints of the given edge exist in the graph on different objects.
         :return: the edge added
         """
-        if self.AreConnected(edge.Vertices[0], edge.Vertices[1]) and not self._multigraph:
+        if self.Edge(edge.ID):
+            raise Exception("The graph already contains an edge with this ID.")
+        if self.AreConnected(edge.Source.ID, edge.Target.ID) and not self._multigraph:
             raise Exception("Graph is not a multigraph and an edge already exists between vertices")
-        v1, v2 = self.Vertex(edge.Vertices[0].ID), self.Vertex(edge.Vertices[1].ID)
-        v1 = v1 if v1 else self.AddVertex(edge.Vertices[0])
-        v2 = v2 if v2 else self.AddVertex(edge.Vertices[1])
+        v1, v2 = self.Vertex(edge.Source.ID), self.Vertex(edge.Target.ID)
+        v1 = v1 if v1 else self.AddVertex(edge.Source)
+        v2 = v2 if v2 else self.AddVertex(edge.Target)
+        if v1 != edge.Source or v2 != edge.Target:
+            raise Exception("IDs of endpoints already in the graph but on different objects. You can use .Connect with extendFrom= but the edge would not be the same object.")
         self.__edges[edge.ID] = edge
-        if self.__adjacency[v1.ID].get(v2.ID, None) is None:
-            self.__adjacency[v1.ID][v2.ID] = {}
-        if self.__adjacency[v2.ID].get(v1.ID, None) is None:
-            self.__adjacency[v2.ID][v1.ID] = {}
+        if self.__adjacency[v1.ID].get(v2.ID, None) is None: self.__adjacency[v1.ID][v2.ID] = {}
+        if self.__adjacency[v2.ID].get(v1.ID, None) is None: self.__adjacency[v2.ID][v1.ID] = {}
         self.__adjacency[v1.ID][v2.ID][edge.ID] = edge
         self.__adjacency[v2.ID][v1.ID][edge.ID] = edge
         return edge
@@ -88,15 +92,17 @@ class Graph(Mappable):
             self._removeEmptyConnection(self.__adjacency, v2.ID, v1.ID)
         return e
 
-    def Connect(self, vertex1ID, vertex2ID):
+    def Connect(self, vertex1ID, vertex2ID, *, extendFrom=None):
         """
         Adds an edge between two vertices according to their IDs.
         If a vertex with a given ID does not exist in the graph, a vertex with the ID will be created.
-        Raises Exception if an edge exists and _multigraph is False
-        :return: the edge added or a dictionary with the edges found
+        :param extendFrom: An Extendable object from which properties will be copied to the new edge
+        :return: the edge added
         """
         v1, v2 = self.Vertex(vertex1ID), self.Vertex(vertex2ID)
-        return self.AddEdge(Edge(v1 if v1 else Vertex(ID=vertex1ID), v2 if v2 else Vertex(ID=vertex2ID)))
+        e = Edge(v1 if v1 else Vertex(ID=vertex1ID), v2 if v2 else Vertex(ID=vertex2ID))
+        if extendFrom: e.UpdateFromObject(extendFrom)
+        return self.AddEdge(e)
 
     def GetBetween(self, vertex1ID, vertex2ID):
         """

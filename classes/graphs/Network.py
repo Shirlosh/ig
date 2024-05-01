@@ -120,8 +120,11 @@ def NetworkClass(topology, *topologyArgs, **topologyKWArgs):
         def FromDictionary(self, data):
             for link in data.get('Edges', {}).values():
                 sData, tData = link['Source'], link['Target']
-                source = Site(sData['Location'], ID=sData['ID']).UpdateFromDictionary(sData)
-                target = Site(tData['Location'], ID=tData['ID']).UpdateFromDictionary(tData)
+                source, target = self.Vertex(sData['ID']), self.Vertex(tData['ID'])
+                if not source: source = Site(sData['Location'], ID=sData['ID'])
+                if not target: target = Site(tData['Location'], ID=tData['ID'])
+                source.UpdateFromDictionary(sData)
+                target.UpdateFromDictionary(tData)
                 self.AddLink(Link(source, target, ID=link['ID'])).FromDictionary(link)
             [self.Site(v['ID']).UpdateFromDictionary(v) for v in data.get('Vertices', {}).values()]
             return self

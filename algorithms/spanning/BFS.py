@@ -24,14 +24,10 @@ def _BFS(g: Graph, srcID, EdgesSubsetType):
     visited[srcID] = True
     while queue:
         vID = queue.pop(0)
-        eds = getattr(g, EdgesSubsetType)(vID)
-        for edge in eds:
+        for edge in getattr(g, EdgesSubsetType)(vID):
             neighbor = edge.Source if edge.Source.ID != vID else edge.Target
             if not visited[neighbor.ID]:
                 queue.append(neighbor.ID)
                 visited[neighbor.ID] = True
-                if pathList.get(vID) is None:
-                    pathList[neighbor.ID] = [edge.ID]
-                else:
-                    pathList[neighbor.ID] = pathList[vID] + [edge.ID]
+                pathList[neighbor.ID] = [edge.ID] if pathList.get(vID) is None else pathList[vID] + [edge.ID]
     return pathList
